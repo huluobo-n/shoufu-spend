@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>帮首富花钱 - 花光首富的钱模拟器｜花钱模拟器摸鱼游戏</title>
+  <meta name="description" content="帮首富花钱：花光世界首富的钱模拟器。点买咖啡、豪车、私人岛屿、航母……看你多久能把约 $2500 亿花光。纯娱乐摸鱼小游戏，免费在线玩。" />
+  <meta name="keywords" content="帮首富花钱,花光首富的钱,花钱模拟器,花光首富,spend money,摸鱼游戏,花光马云的钱,世界首富体验" />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://shoufu.hpn6.com/" />
+  <meta property="og:title" content="帮首富花钱 - 花光首富的钱模拟器" />
+  <meta property="og:description" content="点买商品，看你多久能把世界首富的约 $2500 亿花光。纯娱乐摸鱼小游戏。" />
+  <meta property="og:url" content="https://shoufu.hpn6.com/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1a2332;
+      --muted: #5a6a7a;
+      --border: #e2e8f0;
+      --primary: #7c3aed;
+      --primary-hover: #6d28d9;
+      --accent: #f59e0b;
+      --good: #047857;
+      --bad: #b91c1c;
+      --shadow: 0 8px 24px rgba(26, 35, 50, 0.08);
+      --radius: 14px;
+      --sticky-h: 0px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #f3e8ff 0%, var(--bg) 240px);
+      color: var(--text);
+      line-height: 1.55;
+      padding-bottom: 40px;
+    }
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 16px 14px 48px;
+    }
+    header.hero {
+      text-align: center;
+      margin-bottom: 14px;
+      padding-top: 8px;
+    }
+    header.hero h1 {
+      font-size: clamp(1.45rem, 4.5vw, 2rem);
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #7c3aed, #db2777);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    header.hero p.lead {
+      margin: 0 auto;
+      max-width: 520px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* Sticky money bar */
+    .money-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 16px 12px;
+      margin-bottom: 16px;
+    }
+    .money-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .money-block label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .money-block .val {
+      font-size: clamp(1.15rem, 3.5vw, 1.55rem);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    .money-block.remain .val { color: var(--good); }
+    .money-block.spent .val { color: var(--primary); }
+    .progress-wrap {
+      margin-top: 10px;
+    }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .progress {
+      height: 10px;
+      background: #ede9fe;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #a78bfa, #ec4899, #f59e0b);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 2px 2px 12px;
+      margin-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex: 0 0 auto;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { border-color: #c4b5fd; color: var(--text); }
+    .tab.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    @media (min-width: 640px) {
+      .grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(26, 35, 50, 0.1);
+    }
+    .card .emoji {
+      font-size: 2.2rem;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .card .name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin: 0 0 4px;
+    }
+    .card .price {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 10px;
+    }
+    .qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: auto;
+    }
+    .qty button {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 1.15rem;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--text);
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .qty button:hover:not(:disabled) {
+      background: #ede9fe;
+      border-color: #c4b5fd;
+    }
+    .qty button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .qty button.plus {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .qty button.plus:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    .qty .n {
+      min-width: 28px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      font-size: 0.95rem;
+    }
+    .card.has-qty {
+      border-color: #c4b5fd;
+      background: #faf5ff;
+    }
+
+    /* Layout: list below on mobile, side on wide */
+    .main-layout {
+      display: grid;
+      gap: 16px;
+    }
+    @media (min-width: 900px) {
+      .main-layout {
+        grid-template-columns: 1fr 280px;
+        align-items: start;
+      }
+      .receipt {
+        position: sticky;
+        top: 120px;
+      }
+    }
+
+    .receipt {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .receipt h2 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+    .receipt-empty {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin: 0;
+      padding: 8px 0 4px;
+    }
+    .receipt-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+    .receipt-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--border);
+      font-size: 0.88rem;
+    }
+    .receipt-list li:last-child { border-bottom: none; }
+    .receipt-list .li-name { color: var(--text); }
+    .receipt-list .li-meta {
+      color: var(--muted);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    .receipt-total {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 2px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .receipt-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      flex: 1;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .btn-ghost {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+    .btn-ghost:hover { background: #e2e8f0; }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 35, 50, 0.55);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 18px;
+      padding: 28px 24px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      animation: pop 0.35s ease;
+    }
+    @keyframes pop {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal .big { font-size: 3rem; margin-bottom: 8px; }
+    .modal h2 {
+      margin: 0 0 8px;
+      font-size: 1.45rem;
+      background: linear-gradient(90deg, #7c3aed, #db2777);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .modal p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .modal .btn-primary {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+    }
+    .confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 99;
+      overflow: hidden;
+    }
+    .confetti span {
+      position: absolute;
+      top: -10px;
+      width: 8px;
+      height: 12px;
+      border-radius: 2px;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: 0.3; }
+    }
+
+    footer {
+      margin-top: 36px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.7;
+      padding: 0 8px;
+    }
+    footer a { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>💰 帮首富花钱</h1>
+      <p class="lead">世界首富把约 <strong>$2500 亿</strong>交给你随便花——看你多久能花光。纯娱乐摸鱼，点着玩就行。</p>
+    </header>
+
+    <div class="money-bar" id="moneyBar">
+      <div class="money-row">
+        <div class="money-block remain">
+          <label>剩余余额</label>
+          <div class="val" id="remainVal">$250,000,000,000</div>
+        </div>
+        <div class="money-block spent">
+          <label>已花金额</label>
+          <div class="val" id="spentVal">$0</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span>花光进度</span>
+          <span id="pctVal">0%</span>
+        </div>
+        <div class="progress"><i id="progressBar"></i></div>
+      </div>
+    </div>
+
+    <div class="main-layout">
+      <div>
+        <div class="tabs" id="tabs" role="tablist"></div>
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <aside class="receipt" id="receipt">
+        <h2>🛒 我的购物清单</h2>
+        <p class="receipt-empty" id="receiptEmpty">还没买任何东西，随便点点～</p>
+        <ul class="receipt-list" id="receiptList" hidden></ul>
+        <div class="receipt-total" id="receiptTotal" hidden>
+          <span>合计</span>
+          <span id="receiptSum">$0</span>
+        </div>
+        <div class="receipt-actions">
+          <button type="button" class="btn btn-ghost" id="btnClear">清空</button>
+          <button type="button" class="btn btn-primary" id="btnReset">再来一次</button>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <p>本页为纯娱乐模拟小游戏，与任何真实人物、公司、品牌无关，非官方、非代言。<br />
+      价格为大致参考值，仅供摸鱼。不收集任何用户数据。<br />
+      © 帮首富花钱 · <a href="https://shoufu.hpn6.com/">shoufu.hpn6.com</a></p>
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="big">🎉</div>
+      <h2 id="modalTitle">恭喜花光！</h2>
+      <p id="modalMsg">你把世界首富的约 $2500 亿全部花完了。摸鱼成就达成！</p>
+      <button type="button" class="btn btn-primary" id="modalReset">再来一次</button>
+    </div>
+  </div>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <script>
+(function () {
+  var INITIAL = 250000000000; // $250 billion
+
+  var CATEGORIES = [
+    { id: "daily", name: "日常" },
+    { id: "food", name: "美食" },
+    { id: "tech", name: "科技" },
+    { id: "car", name: "豪车" },
+    { id: "house", name: "房产" },
+    { id: "travel", name: "旅行" },
+    { id: "crazy", name: "疯狂" }
+  ];
+
+  var PRODUCTS = [
+    // 日常
+    { id: "coffee", cat: "daily", emoji: "☕", name: "一杯咖啡", price: 5 },
+    { id: "movie", cat: "daily", emoji: "🎬", name: "电影票", price: 15 },
+    { id: "shoes", cat: "daily", emoji: "👟", name: "运动鞋", price: 120 },
+    { id: "bag", cat: "daily", emoji: "👜", name: "名牌包", price: 2500 },
+    { id: "watch", cat: "daily", emoji: "⌚", name: "奢侈手表", price: 45000 },
+    { id: "jewelry", cat: "daily", emoji: "💎", name: "钻石项链", price: 120000 },
+    { id: "suit", cat: "daily", emoji: "🤵", name: "定制西装", price: 8000 },
+    { id: "spa", cat: "daily", emoji: "🧖", name: "顶级 SPA", price: 1500 },
+
+    // 美食
+    { id: "burger", cat: "food", emoji: "🍔", name: "豪华汉堡", price: 12 },
+    { id: "pizza", cat: "food", emoji: "🍕", name: "披萨派对", price: 80 },
+    { id: "sushi", cat: "food", emoji: "🍣", name: "米其林寿司", price: 500 },
+    { id: "wine", cat: "food", emoji: "🍷", name: "珍藏红酒", price: 5000 },
+    { id: "caviar", cat: "food", emoji: "🥄", name: "鱼子酱盛宴", price: 3000 },
+    { id: "chef", cat: "food", emoji: "👨‍🍳", name: "私人厨师一年", price: 250000 },
+    { id: "banquet", cat: "food", emoji: "🥂", name: "百人宴会", price: 100000 },
+    { id: "goldsteak", cat: "food", emoji: "🥩", name: "黄金牛排", price: 1500 },
+
+    // 科技
+    { id: "phone", cat: "tech", emoji: "📱", name: "旗舰手机", price: 1200 },
+    { id: "laptop", cat: "tech", emoji: "💻", name: "顶级笔记本", price: 3500 },
+    { id: "vr", cat: "tech", emoji: "🥽", name: "VR 头显", price: 800 },
+    { id: "drone", cat: "tech", emoji: "🛸", name: "专业无人机", price: 2500 },
+    { id: "robot", cat: "tech", emoji: "🤖", name: "家用机器人", price: 50000 },
+    { id: "server", cat: "tech", emoji: "🖥️", name: "服务器机房", price: 2000000 },
+    { id: "quantum", cat: "tech", emoji: "⚛️", name: "量子计算机", price: 15000000 },
+    { id: "sat", cat: "tech", emoji: "🛰️", name: "私人卫星", price: 500000000 },
+
+    // 豪车
+    { id: "tesla", cat: "car", emoji: "🚗", name: "特斯拉 Model S", price: 90000 },
+    { id: "porsche", cat: "car", emoji: "🏎️", name: "保时捷 911", price: 150000 },
+    { id: "lambo", cat: "car", emoji: "🏎️", name: "兰博基尼", price: 400000 },
+    { id: "rolls", cat: "car", emoji: "🚘", name: "劳斯莱斯", price: 500000 },
+    { id: "ferrari", cat: "car", emoji: "🏁", name: "法拉利", price: 350000 },
+    { id: "f1", cat: "car", emoji: "🏎️", name: "F1 赛车", price: 15000000 },
+    { id: "garage", cat: "car", emoji: "🅿️", name: "豪车车库满配", price: 10000000 },
+    { id: "bugatti", cat: "car", emoji: "💨", name: "布加迪", price: 3000000 },
+
+    // 房产
+    { id: "apt", cat: "house", emoji: "🏠", name: "市区公寓", price: 800000 },
+    { id: "villa", cat: "house", emoji: "🏡", name: "海景别墅", price: 5000000 },
+    { id: "mansion", cat: "house", emoji: "🏰", name: "私人庄园", price: 50000000 },
+    { id: "penthouse", cat: "house", emoji: "🌆", name: "顶层复式", price: 25000000 },
+    { id: "castle", cat: "house", emoji: "🏯", name: "欧洲城堡", price: 80000000 },
+    { id: "skyscraper", cat: "house", emoji: "🏢", name: "摩天大楼", price: 1000000000 },
+    { id: "islandhouse", cat: "house", emoji: "🌴", name: "岛上度假屋", price: 15000000 },
+    { id: "ranch", cat: "house", emoji: "🤠", name: "巨型牧场", price: 120000000 },
+
+    // 旅行
+    { id: "flight", cat: "travel", emoji: "✈️", name: "头等舱环球", price: 20000 },
+    { id: "cruise", cat: "travel", emoji: "🚢", name: "豪华邮轮游", price: 50000 },
+    { id: "balloon", cat: "travel", emoji: "🎈", name: "热气球旅行", price: 5000 },
+    { id: "safari", cat: "travel", emoji: "🦁", name: "非洲 Safari", price: 30000 },
+    { id: "space", cat: "travel", emoji: "🚀", name: "太空旅行票", price: 450000 },
+    { id: "jet", cat: "travel", emoji: "🛩️", name: "私人飞机", price: 70000000 },
+    { id: "yacht", cat: "travel", emoji: "🛥️", name: "超级游艇", price: 300000000 },
+    { id: "sub", cat: "travel", emoji: "🤿", name: "私人潜水艇", price: 40000000 },
+
+    // 疯狂
+    { id: "island", cat: "crazy", emoji: "🏝️", name: "私人岛屿", price: 150000000 },
+    { id: "team", cat: "crazy", emoji: "⚽", name: "足球俱乐部", price: 3000000000 },
+    { id: "social", cat: "crazy", emoji: "📱", name: "买下社交平台", price: 44000000000 },
+    { id: "carrier", cat: "crazy", emoji: "⚓", name: "航空母舰", price: 13000000000 },
+    { id: "movie_studio", cat: "crazy", emoji: "🎥", name: "好莱坞片场", price: 5000000000 },
+    { id: "moon", cat: "crazy", emoji: "🌙", name: "月球一块地", price: 1000000000 },
+    { id: "nba", cat: "crazy", emoji: "🏀", name: "NBA 球队", price: 4000000000 },
+    { id: "goldbar", cat: "crazy", emoji: "🥇", name: "一吨黄金", price: 70000000 },
+    { id: "election", cat: "crazy", emoji: "🗳️", name: "总统竞选预算", price: 2000000000 },
+    { id: "museum", cat: "crazy", emoji: "🖼️", name: "私人博物馆", price: 800000000 },
+    { id: "zoo", cat: "crazy", emoji: "🦒", name: "私人动物园", price: 200000000 },
+    { id: "rocket", cat: "crazy", emoji: "🛰️", name: "整支火箭公司", price: 30000000000 }
+  ];
+
+  // Fix submarine emoji (used Chinese by mistake)
+  PRODUCTS.forEach(function (p) {
+    if (p.id === "sub") p.emoji = "潜艇".length && (p.emoji = "🚤");
+  });
+  // Better: set properly
+  for (var i = 0; i < PRODUCTS.length; i++) {
+    if (PRODUCTS[i].id === "sub") PRODUCTS[i].emoji = "🤿";
+  }
+
+  var qty = {};
+  var currentCat = "daily";
+  var celebrated = false;
+
+  function fmt(n) {
+    var neg = n < 0;
+    n = Math.abs(Math.round(n));
+    var s = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (neg ? "-$" : "$") + s;
+  }
+
+  function spent() {
+    var s = 0;
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      var p = PRODUCTS[i];
+      var q = qty[p.id] || 0;
+      if (q) s += p.price * q;
+    }
+    return s;
+  }
+
+  function remain() {
+    return INITIAL - spent();
+  }
+
+  function updateMoney() {
+    var s = spent();
+    var r = INITIAL - s;
+    document.getElementById("remainVal").textContent = fmt(r);
+    document.getElementById("spentVal").textContent = fmt(s);
+    var pct = Math.min(100, (s / INITIAL) * 100);
+    document.getElementById("pctVal").textContent = pct.toFixed(pct < 0.01 && s > 0 ? 4 : pct < 1 ? 2 : 1) + "%";
+    document.getElementById("progressBar").style.width = pct + "%";
+
+    if (r <= 0 && s > 0 && !celebrated) {
+      celebrated = true;
+      showWin();
+    }
+  }
+
+  function renderTabs() {
+    var el = document.getElementById("tabs");
+    el.innerHTML = "";
+    CATEGORIES.forEach(function (c) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tab" + (c.id === currentCat ? " active" : "");
+      b.textContent = c.name;
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", c.id === currentCat ? "true" : "false");
+      b.addEventListener("click", function () {
+        currentCat = c.id;
+        renderTabs();
+        renderGrid();
+      });
+      el.appendChild(b);
+    });
+  }
+
+  function renderGrid() {
+    var el = document.getElementById("grid");
+    el.innerHTML = "";
+    var r = remain();
+    PRODUCTS.filter(function (p) { return p.cat === currentCat; }).forEach(function (p) {
+      var q = qty[p.id] || 0;
+      var card = document.createElement("div");
+      card.className = "card" + (q > 0 ? " has-qty" : "");
+      var canAdd = r >= p.price;
+
+      var emoji = document.createElement("div");
+      emoji.className = "emoji";
+      emoji.textContent = p.emoji;
+      card.appendChild(emoji);
+
+      var name = document.createElement("div");
+      name.className = "name";
+      name.textContent = p.name;
+      card.appendChild(name);
+
+      var price = document.createElement("div");
+      price.className = "price";
+      price.textContent = fmt(p.price);
+      card.appendChild(price);
+
+      var qtyEl = document.createElement("div");
+      qtyEl.className = "qty";
+
+      var minus = document.createElement("button");
+      minus.type = "button";
+      minus.textContent = "−";
+      minus.setAttribute("aria-label", "减少 " + p.name);
+      minus.disabled = q <= 0;
+      minus.addEventListener("click", function () { changeQty(p.id, -1); });
+
+      var n = document.createElement("span");
+      n.className = "n";
+      n.textContent = String(q);
+
+      var plus = document.createElement("button");
+      plus.type = "button";
+      plus.className = "plus";
+      plus.textContent = "+";
+      plus.setAttribute("aria-label", "购买 " + p.name);
+      plus.disabled = !canAdd;
+      plus.addEventListener("click", function () { changeQty(p.id, 1); });
+
+      qtyEl.appendChild(minus);
+      qtyEl.appendChild(n);
+      qtyEl.appendChild(plus);
+      card.appendChild(qtyEl);
+      el.appendChild(card);
+    });
+  }
+
+  function renderReceipt() {
+    var list = document.getElementById("receiptList");
+    var empty = document.getElementById("receiptEmpty");
+    var total = document.getElementById("receiptTotal");
+    var items = PRODUCTS.filter(function (p) { return (qty[p.id] || 0) > 0; });
+
+    if (!items.length) {
+      empty.hidden = false;
+      list.hidden = true;
+      total.hidden = true;
+      list.innerHTML = "";
+      return;
+    }
+    empty.hidden = true;
+    list.hidden = false;
+    total.hidden = false;
+    list.innerHTML = "";
+    items.forEach(function (p) {
+      var q = qty[p.id];
+      var li = document.createElement("li");
+      var left = document.createElement("span");
+      left.className = "li-name";
+      left.textContent = p.emoji + " " + p.name + " ×" + q;
+      var right = document.createElement("span");
+      right.className = "li-meta";
+      right.textContent = fmt(p.price * q);
+      li.appendChild(left);
+      li.appendChild(right);
+      list.appendChild(li);
+    });
+    document.getElementById("receiptSum").textContent = fmt(spent());
+  }
+
+  function changeQty(id, delta) {
+    var p = null;
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (PRODUCTS[i].id === id) { p = PRODUCTS[i]; break; }
+    }
+    if (!p) return;
+    var cur = qty[id] || 0;
+    if (delta > 0) {
+      if (remain() < p.price) return;
+      qty[id] = cur + 1;
+    } else {
+      if (cur <= 0) return;
+      qty[id] = cur - 1;
+      if (qty[id] === 0) delete qty[id];
+      celebrated = false;
+      hideWin();
+    }
+    updateMoney();
+    renderGrid();
+    renderReceipt();
+  }
+
+  function resetAll() {
+    qty = {};
+    celebrated = false;
+    hideWin();
+    updateMoney();
+    renderGrid();
+    renderReceipt();
+  }
+
+  function showWin() {
+    document.getElementById("modal").classList.add("show");
+    spawnConfetti();
+  }
+  function hideWin() {
+    document.getElementById("modal").classList.remove("show");
+    document.getElementById("confetti").innerHTML = "";
+  }
+
+  function spawnConfetti() {
+    var box = document.getElementById("confetti");
+    box.innerHTML = "";
+    var colors = ["#7c3aed", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#ef4444"];
+    for (var i = 0; i < 48; i++) {
+      var s = document.createElement("span");
+      s.style.left = Math.random() * 100 + "%";
+      s.style.background = colors[i % colors.length];
+      s.style.animationDuration = (2 + Math.random() * 2.5) + "s";
+      s.style.animationDelay = (Math.random() * 0.8) + "s";
+      s.style.width = (6 + Math.random() * 6) + "px";
+      s.style.height = (8 + Math.random() * 8) + "px";
+      box.appendChild(s);
+    }
+  }
+
+  document.getElementById("btnClear").addEventListener("click", function () {
+    qty = {};
+    celebrated = false;
+    hideWin();
+    updateMoney();
+    renderGrid();
+    renderReceipt();
+  });
+  document.getElementById("btnReset").addEventListener("click", resetAll);
+  document.getElementById("modalReset").addEventListener("click", resetAll);
+  document.getElementById("modal").addEventListener("click", function (e) {
+    if (e.target === this) hideWin();
+  });
+
+  renderTabs();
+  renderGrid();
+  renderReceipt();
+  updateMoney();
+})();
+  </script>
+</body>
+</html>
