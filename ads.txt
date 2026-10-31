@@ -1,2 +1,1 @@
-# Google AdSense ads.txt — replace with publisher line after approval
-# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-2118305643241262, DIRECT, f08c47fec0942fa0
